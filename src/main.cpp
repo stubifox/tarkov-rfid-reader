@@ -11,6 +11,7 @@
 #define RST_PIN 9
 MFRC522 rfid(SS_PIN, RST_PIN); //instance of the class
 MFRC522::MIFARE_Key key;
+//red keycard
 int code[] = {50, 72, 157, 178};
 int codeRead = 0;
 String uidString;
@@ -75,7 +76,6 @@ void readRFID()
 //WIFI CONFIGURATIONS
 char ssid[] = SECRET_SSID; // your network SSID (name)
 char pass[] = SECRET_PASS; // your network password (use for WPA, or use as key for WEP), length must be 8+
-int keyIndex = 0;          // your network key index number (needed only for WEP)
 int status = WL_IDLE_STATUS;
 int led = LED_BUILTIN;
 WiFiServer server(80);
