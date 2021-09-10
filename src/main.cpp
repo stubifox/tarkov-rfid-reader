@@ -5,7 +5,7 @@
 #define WIFI_FIRMWARE_LATEST_VERSION "1.4.5"
 #include <WiFiNINA_Generic.h>
 #include <MFRC522.h>
-
+#include "DFRobotDFPlayerMini.h"
 //RFID CONFIGURATIONS
 #define SS_PIN 10
 #define RST_PIN 9
@@ -15,6 +15,9 @@ MFRC522::MIFARE_Key key;
 int code[] = {50, 72, 157, 178};
 int codeRead = 0;
 String uidString;
+
+DFRobotDFPlayerMini myDFPlayer;
+void printDetail(uint8_t type, int value);
 
 void printDec(byte *buffer, byte bufferSize)
 {
@@ -56,6 +59,7 @@ void readRFID()
   if (match)
   {
     Serial.println("\n*** Unlock ***");
+    // myDFPlayer.play(1);
   }
   else
   {
@@ -157,6 +161,7 @@ void setup()
   SPI.begin();
   Serial.println("starting setup");
   rfid.PCD_Init();
+  // myDFPlayer.volume(4);
 }
 
 void loop()
@@ -165,6 +170,74 @@ void loop()
   {
     readRFID();
   }
+  // if (myDFPlayer.available())
+  // {
+  //   printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
+  // }
 
   delay(100);
+}
+
+void printDetail(uint8_t type, int value)
+{
+  switch (type)
+  {
+  case TimeOut:
+    Serial.println(F("Time Out!"));
+    break;
+  case WrongStack:
+    Serial.println(F("Stack Wrong!"));
+    break;
+  case DFPlayerCardInserted:
+    Serial.println(F("Card Inserted!"));
+    break;
+  case DFPlayerCardRemoved:
+    Serial.println(F("Card Removed!"));
+    break;
+  case DFPlayerCardOnline:
+    Serial.println(F("Card Online!"));
+    break;
+  case DFPlayerUSBInserted:
+    Serial.println("USB Inserted!");
+    break;
+  case DFPlayerUSBRemoved:
+    Serial.println("USB Removed!");
+    break;
+  case DFPlayerPlayFinished:
+    Serial.print(F("Number:"));
+    Serial.print(value);
+    Serial.println(F(" Play Finished!"));
+    break;
+  case DFPlayerError:
+    Serial.print(F("DFPlayerError:"));
+    switch (value)
+    {
+    case Busy:
+      Serial.println(F("Card not found"));
+      break;
+    case Sleeping:
+      Serial.println(F("Sleeping"));
+      break;
+    case SerialWrongStack:
+      Serial.println(F("Get Wrong Stack"));
+      break;
+    case CheckSumNotMatch:
+      Serial.println(F("Check Sum Not Match"));
+      break;
+    case FileIndexOut:
+      Serial.println(F("File Index Out of Bound"));
+      break;
+    case FileMismatch:
+      Serial.println(F("Cannot Find File"));
+      break;
+    case Advertise:
+      Serial.println(F("In Advertise"));
+      break;
+    default:
+      break;
+    }
+    break;
+  default:
+    break;
+  }
 }
