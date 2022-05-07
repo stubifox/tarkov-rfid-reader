@@ -30,7 +30,7 @@ void printDec(byte *buffer, byte bufferSize)
 
 void readRFID()
 {
-  Serial.println("i found something...");
+  myDFPlayer.play(2);
   rfid.PICC_ReadCardSerial();
   Serial.print(F("\nPICC type: "));
   MFRC522::PICC_Type piccType = rfid.PICC_GetType(rfid.uid.sak);
@@ -59,11 +59,12 @@ void readRFID()
   if (match)
   {
     Serial.println("\n*** Unlock ***");
-    // myDFPlayer.play(1);
+    myDFPlayer.play(1);
   }
   else
   {
     Serial.println("\nUnknown Card");
+    myDFPlayer.play(3);
   }
 
   Serial.println("============================");
@@ -161,7 +162,7 @@ void setup()
   SPI.begin();
   Serial.println("starting setup");
   rfid.PCD_Init();
-  // myDFPlayer.volume(4);
+  myDFPlayer.volume(4);
 }
 
 void loop()
@@ -170,10 +171,10 @@ void loop()
   {
     readRFID();
   }
-  // if (myDFPlayer.available())
-  // {
-  //   printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
-  // }
+  if (myDFPlayer.available())
+  {
+    printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
+  }
 
   delay(100);
 }
